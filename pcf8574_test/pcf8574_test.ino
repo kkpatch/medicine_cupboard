@@ -5,14 +5,15 @@ PCF8574 PCF(0x20);
 
 void setup() {
   Serial.begin(115200);
-  PCF.pinMode(P0, OUTPUT);
-  PCF.pinMode(P1, OUTPUT);
-  PCF.pinMode(P2, OUTPUT);
-  PCF.pinMode(P3, OUTPUT);
-  PCF.pinMode(P4, OUTPUT);
-  PCF.pinMode(P5, OUTPUT);
-  PCF.pinMode(P6, OUTPUT);
-  PCF.pinMode(P7, OUTPUT);
+  PCF.digitalWrite(P0, LOW);
+  PCF.pinMode(P0, OUTPUT, LOW);
+  PCF.pinMode(P1, OUTPUT, LOW);
+  PCF.pinMode(P2, OUTPUT, LOW);
+  PCF.pinMode(P3, OUTPUT, LOW);
+  PCF.pinMode(P4, OUTPUT, LOW);
+  PCF.pinMode(P5, OUTPUT, LOW);
+  PCF.pinMode(P6, OUTPUT, LOW);
+  PCF.pinMode(P7, OUTPUT, LOW);
   PCF.begin();
 }
 
