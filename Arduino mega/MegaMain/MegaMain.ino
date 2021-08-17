@@ -6,6 +6,15 @@
 PCF8574 i2c_LED(0x23);
 DS1307 clk;//define a object of DS1307 class
 
+int state = 0;
+int state2 = 0;
+char cupboardState_now[7] = {'c','c','c','c','c','c','c'};  //(c)lose,(o)pen     
+char cupboardState_pre[7] = {'c','c','c','c','c','c','c'};  
+
+char servoState_now[7] = {'l','l','l','l','l','l','l'};     //(l)ock,(u)nlock  
+
+int check[7] = {0,0,0,0,0,0,0};
+
 void setup() {
   Serial.begin(115200);
   
@@ -45,7 +54,7 @@ void setup() {
 //------------------------------    
 }
 
-void ledWrite(int pin){
+void ledWriteHigh(int pin){
   i2c_LED.digitalWrite(P0, LOW);
   i2c_LED.digitalWrite(P1, LOW);
   i2c_LED.digitalWrite(P2, LOW);
@@ -54,6 +63,15 @@ void ledWrite(int pin){
   i2c_LED.digitalWrite(P5, LOW);
   i2c_LED.digitalWrite(P6, LOW);
   i2c_LED.digitalWrite(pin, HIGH);
+}
+void ledWriteLow(){
+  i2c_LED.digitalWrite(P0, LOW);
+  i2c_LED.digitalWrite(P1, LOW);
+  i2c_LED.digitalWrite(P2, LOW);
+  i2c_LED.digitalWrite(P3, LOW);
+  i2c_LED.digitalWrite(P4, LOW);
+  i2c_LED.digitalWrite(P5, LOW);
+  i2c_LED.digitalWrite(P6, LOW);
 }
 
 void loop() {
@@ -65,63 +83,109 @@ void loop() {
   Serial.print(clk.minute);
   Serial.print(":");
   Serial.print(clk.second);
+  Serial.print(" ");
+  Serial.print(digitalRead(31));
+  Serial.print(digitalRead(33));
+  Serial.print(digitalRead(35));
+  Serial.print(digitalRead(37));
+  Serial.print(digitalRead(39));
+  Serial.print(digitalRead(41));
+  Serial.print(digitalRead(43));
   Serial.println();
-
+  
   if(clk.hour == 7 && clk.minute == 45){
-    ledWrite(P0);
-    analogWrite(A0, 200);
+    if(check[0] == 0){
+      ledWriteHigh(P0);
+      tone(A0,600);
+      check[0] = 1;      
+      //----Set servo to unlock---------
+
+      //--------------------------------
+    }
   }
   if(clk.hour == 9 && clk.minute == 0){
-    ledWrite(P1);
-    analogWrite(A0, 200);
+    if(check[1] == 0){
+      ledWriteHigh(P1);
+      tone(A0,600);
+      check[1] = 1;
+    }      
   }
   if(clk.hour == 11 && clk.minute == 45){
-    ledWrite(P2);
-    analogWrite(A0, 200);
+    if(check[2] == 0){
+      ledWriteHigh(P2);
+      tone(A0,600);
+      check[2] = 1;
+    }
   }
   if(clk.hour == 13 && clk.minute == 0){
-    ledWrite(P3);
-    analogWrite(A0, 200);
+    if(check[3] == 0){
+      ledWriteHigh(P3);
+      tone(A0,600);
+      check[3] = 1;
+    }
   }
   if(clk.hour == 17 && clk.minute == 45){
-    ledWrite(P4);
-    analogWrite(A0, 200);
+    if(check[4] == 0){
+      ledWriteHigh(P4);
+      tone(A0,600);
+      check[4] = 1;
+    }
   }
-  if(clk.hour == 19 && clk.minute == 00){
-    ledWrite(P5);
-    analogWrite(A0, 200);
+  if(clk.hour == 17 && clk.minute == 39){
+    if(check[5] == 0){
+      ledWriteHigh(P5);
+      tone(A0,600);
+      check[5] = 1;
+    }    
   }
   if(clk.hour == 23 && clk.minute == 33){
-    ledWrite(P6);
-    analogWrite(A0, 200);
+    if(check[6] == 0){
+      ledWriteHigh(P6);
+      tone(A0,600);
+      check[6] = 1;      
+    }
+  }
+  if(clk.hour == 0 && clk.minute == 0){
+    for(int i = 0;i<7;i++){
+      check[i] = 0;
+    }
   }
 
-  if(digitalRead(31) == LOW){  //ตู้ชั้นที่ 1 เปิด
-    i2c_LED.digitalWrite(P0, LOW);
-    analogWrite(D0, 0);
+  for(int i = 0;i<7;i++){
+    if(digitalRead(31+(2*i)) == 0){
+      cupboardState_now[i] = 'o';
+    }
   }
-  if(digitalRead(33) == LOW){  //ตู้ชั้นที่ 2 เปิด
-    i2c_LED.digitalWrite(P1, LOW);
-    analogWrite(D0, 0);   
+  for(int i = 0;i<7;i++){
+    if(digitalRead(31+(2*i)) == 1){
+      cupboardState_now[i] = 'c';
+    }
   }
-  if(digitalRead(35) == LOW){  //ตู้ชั้นที่ 3 เปิด
-    i2c_LED.digitalWrite(P2, LOW);
-    analogWrite(D0, 0);   
+
+  for(int i = 0;i<7;i++){
+    if(cupboardState_pre[i] == 'c' && cupboardState_now[i] == 'o'){
+      Serial.print("floor "+String(i)+" close then open");
+      Serial.println();
+      noTone(A0);
+      ledWriteLow();
+      //--------Line notify-------------
+
+      //--------------------------------
+
+    }
   }
-  if(digitalRead(37) == LOW){  //ตู้ชั้นที่ 4 เปิด
-    i2c_LED.digitalWrite(P3, LOW);
-    analogWrite(D0, 0);   
+  for(int i = 0;i<7;i++){
+    if(cupboardState_pre[i] == 'o' && cupboardState_now[i] == 'c'){
+      Serial.print("floor "+String(i)+" open then close");
+      Serial.println();
+      //-----Set servo to lock----------
+
+      //--------------------------------
+    }
   }
-  if(digitalRead(39) == LOW){  //ตู้ชั้นที่ 5 เปิด
-    i2c_LED.digitalWrite(P4, LOW);
-    analogWrite(D0, 0);   
+  
+  for(int i = 0;i<7;i++){
+    cupboardState_pre[i] = cupboardState_now[i];    
   }
-  if(digitalRead(41) == LOW){  //ตู้ชั้นที่ 6 เปิด
-    i2c_LED.digitalWrite(P5, LOW);
-    analogWrite(D0, 0);   
-  }
-  if(digitalRead(43) == LOW){  //ตู้ชั้นที่ 7 เปิด
-    i2c_LED.digitalWrite(P6, LOW);
-    analogWrite(D0, 0);   
-  }
+
 }

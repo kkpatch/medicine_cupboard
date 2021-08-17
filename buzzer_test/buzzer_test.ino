@@ -2,14 +2,14 @@
 
 void setup(){
 
-pinMode(D0,OUTPUT);
+pinMode(A0,OUTPUT);
 }
 void loop(){
+tone(A0,600);
 
-analogWrite(D0, 200);
-delay(1000);
-analogWrite(D0, 0);
-delay(1000);
+delay(100);
+noTone(A0);
+delay(100);
 
 
 }
