@@ -122,27 +122,27 @@ void loop() {
 
   if(clk.hour == 7 && clk.minute == 45){
     ledWrite(P0);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 9 && clk.minute == 0){
     ledWrite(P1);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 11 && clk.minute == 45){
     ledWrite(P2);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 13 && clk.minute == 0){
     ledWrite(P3);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 17 && clk.minute == 45){
     ledWrite(P4);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 19 && clk.minute == 00){
     ledWrite(P5);
-    analogWrite(A0, 200);
+    analogWrite(D0, 200);
   }
   if(clk.hour == 23 && clk.minute == 33){
     ledWrite(P6);
@@ -151,31 +151,31 @@ void loop() {
 
   if(i2c_MagnetSensor.digitalRead(P0) == LOW){  //ตู้ชั้นที่ 1 เปิด
     i2c_LED.digitalWrite(P0, LOW);
-    analogWrite(A0, 0);  
+    analogWrite(D0, 0);
   }
   if(i2c_MagnetSensor.digitalRead(P1) == LOW){  //ตู้ชั้นที่ 2 เปิด
     i2c_LED.digitalWrite(P1, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
   if(i2c_MagnetSensor.digitalRead(P2) == LOW){  //ตู้ชั้นที่ 3 เปิด
     i2c_LED.digitalWrite(P2, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
   if(i2c_MagnetSensor.digitalRead(P3) == LOW){  //ตู้ชั้นที่ 4 เปิด
     i2c_LED.digitalWrite(P3, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
   if(i2c_MagnetSensor.digitalRead(P4) == LOW){  //ตู้ชั้นที่ 5 เปิด
     i2c_LED.digitalWrite(P4, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
   if(i2c_MagnetSensor.digitalRead(P5) == LOW){  //ตู้ชั้นที่ 6 เปิด
     i2c_LED.digitalWrite(P5, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
   if(i2c_MagnetSensor.digitalRead(P6) == LOW){  //ตู้ชั้นที่ 7 เปิด
     i2c_LED.digitalWrite(P6, LOW);
-    analogWrite(A0, 0);   
+    analogWrite(D0, 0);   
   }
 
 
