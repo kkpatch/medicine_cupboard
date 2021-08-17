@@ -6,8 +6,6 @@
 PCF8574 i2c_LED(0x23);
 DS1307 clk;//define a object of DS1307 class
 
-int state = 0;
-int state2 = 0;
 char cupboardState_now[7] = {'c','c','c','c','c','c','c'};  //(c)lose,(o)pen     
 char cupboardState_pre[7] = {'c','c','c','c','c','c','c'};  
 
@@ -28,7 +26,7 @@ void setup() {
   i2c_LED.pinMode(P5, OUTPUT, LOW);
   i2c_LED.pinMode(P6, OUTPUT, LOW);
 
-    i2c_LED.begin();
+  i2c_LED.begin();
 //------------------------------
 
 //-----MagnetSensor setup-------
