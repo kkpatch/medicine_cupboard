@@ -1,37 +1,81 @@
 #include <Servo.h>
-Servo myservo1; //ประกาศตัวแปรแทน Servo
-Servo myservo2; //ประกาศตัวแปรแทน Servo
-Servo myservo3; //ประกาศตัวแปรแทน Servo
-Servo myservo4; //ประกาศตัวแปรแทน Servo
-Servo myservo5; //ประกาศตัวแปรแทน Servo
-Servo myservo6; //ประกาศตัวแปรแทน Servo
-Servo myservo7; //ประกาศตัวแปรแทน Servo
+Servo m1; //ประกาศตัวแปรแทน Servo
+Servo m2; //ประกาศตัวแปรแทน Servo
+Servo m3; //ประกาศตัวแปรแทน Servo
+Servo m4; //ประกาศตัวแปรแทน Servo
+Servo m5; //ประกาศตัวแปรแทน Servo
+Servo m6; //ประกาศตัวแปรแทน Servo
+Servo m7; //ประกาศตัวแปรแทน Servo
 int stat = 0;
 void setup()
 {
-myservo1.attach(2); // กำหนดขา 9 ควบคุม Servo
-myservo2.attach(3); // กำหนดขา 9 ควบคุม Servo
-myservo3.attach(4); // กำหนดขา 9 ควบคุม Servo
-myservo4.attach(5); // กำหนดขา 9 ควบคุม Servo
-myservo5.attach(6); // กำหนดขา 9 ควบคุม Servo
-myservo6.attach(9); // กำหนดขา 9 ควบคุม Servo
-//myservo7.attach(6); // กำหนดขา 9 ควบคุม Servo
+m1.attach(2); // กำหนดขา 9 ควบคุม Servo
+m2.attach(4); // กำหนดขา 9 ควบคุม Servo
+m3.attach(6); // กำหนดขา 9 ควบคุม Servo
+m4.attach(8); // กำหนดขา 9 ควบคุม Servo
+m5.attach(9); // กำหนดขา 9 ควบคุม Servo
+m6.attach(10); // กำหนดขา 9 ควบคุม Servo
+m7.attach(11); // กำหนดขา 9 ควบคุม Servo
+
+m1.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m2.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m3.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m4.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m5.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m6.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m7.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+
+m5.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m3.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m1.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m4.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m2.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m6.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m7.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+
+m7.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m6.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m2.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m4.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m1.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m3.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+m5.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+delay(1000); // หน่วงเวลา 1000ms
+
+
 }
 void loop()
 {
-  if(stat == 0){
 
-    myservo1.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
-    delay(1000); // หน่วงเวลา 1000ms
-    myservo1.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
-    delay(1000); // หน่วงเวลา 1000ms
-    myservo1.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
-    delay(1000); // หน่วงเวลา 1000ms
+//    myservo1.write(0); // สั่งให้ Servo หมุนไปองศาที่ 0
+//    delay(1000); // หน่วงเวลา 1000ms
+//    myservo1.write(90); // สั่งให้ Servo หมุนไปองศาที่ 0
+//    delay(1000); // หน่วงเวลา 1000ms
 
 
 
-      stat = 1;
-  }
+
+
 
 
 }
