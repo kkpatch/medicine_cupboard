@@ -11,6 +11,10 @@
 #include <ESP8266WebServer.h>
 #include <EEPROM.h>
 
+#include <TridentTD_LineNotify.h>
+
+#define LINE_TOKEN "mBNOXD1bQbQHRhooALfaodwE7vdxGGhf6pBpthGj28u"
+
 //Variables
 int i = 0;
 int statusCode;
@@ -71,6 +75,7 @@ void setup()
   if (testWifi())
   {
     Serial.println("Succesfully Connected!!!");
+    LINE.notify("เชื่อมต่อแล้ว");
     return;
   }
   else
@@ -453,49 +458,50 @@ void createWebServer()
           Serial.print("Wrote: ");
           Serial.println(qpass[i]);
         }
+        
+        EEPROM.write(65, qcheckbox1[0]);
+        EEPROM.write(66, qcheckbox2[0]);
+        EEPROM.write(67, qcheckbox3[0]);
+        EEPROM.write(68, qcheckbox4[0]);
+        EEPROM.write(69, qcheckbox5[0]);
+        EEPROM.write(70, qcheckbox6[0]);
+        EEPROM.write(71, qcheckbox7[0]);
+        
+        EEPROM.write(72, qtime_1[0]);
+        EEPROM.write(73, qtime_1[1]);
+        EEPROM.write(74, qtime_1[3]);
+        EEPROM.write(75, qtime_1[4]);
 
-        EEPROM.write(65, qtime_1[0]);
-        EEPROM.write(66, qtime_1[1]);
-        EEPROM.write(67, qtime_1[3]);
-        EEPROM.write(68, qtime_1[4]);
+        EEPROM.write(76, qtime_2[0]);
+        EEPROM.write(77, qtime_2[1]);
+        EEPROM.write(78, qtime_2[3]);
+        EEPROM.write(79, qtime_2[4]);
 
-        EEPROM.write(69, qtime_2[0]);
-        EEPROM.write(70, qtime_2[1]);
-        EEPROM.write(71, qtime_2[3]);
-        EEPROM.write(72, qtime_2[4]);
+        EEPROM.write(80, qtime_3[0]);
+        EEPROM.write(81, qtime_3[1]);
+        EEPROM.write(82, qtime_3[3]);
+        EEPROM.write(83, qtime_3[4]);
 
-        EEPROM.write(73, qtime_3[0]);
-        EEPROM.write(74, qtime_3[1]);
-        EEPROM.write(75, qtime_3[3]);
-        EEPROM.write(76, qtime_3[4]);
+        EEPROM.write(84, qtime_4[0]);
+        EEPROM.write(85, qtime_4[1]);
+        EEPROM.write(86, qtime_4[3]);
+        EEPROM.write(87, qtime_4[4]);
 
-        EEPROM.write(77, qtime_4[0]);
-        EEPROM.write(78, qtime_4[1]);
-        EEPROM.write(79, qtime_4[3]);
-        EEPROM.write(80, qtime_4[4]);
+        EEPROM.write(88, qtime_5[0]);
+        EEPROM.write(89, qtime_5[1]);
+        EEPROM.write(90, qtime_5[3]);
+        EEPROM.write(91, qtime_5[4]);
 
-        EEPROM.write(81, qtime_5[0]);
-        EEPROM.write(82, qtime_5[1]);
-        EEPROM.write(83, qtime_5[3]);
-        EEPROM.write(84, qtime_5[4]);
+        EEPROM.write(92, qtime_6[0]);
+        EEPROM.write(93, qtime_6[1]);
+        EEPROM.write(94, qtime_6[3]);
+        EEPROM.write(95, qtime_6[4]);
 
-        EEPROM.write(85, qtime_6[0]);
-        EEPROM.write(86, qtime_6[1]);
-        EEPROM.write(87, qtime_6[3]);
-        EEPROM.write(88, qtime_6[4]);
+        EEPROM.write(96, qtime_7[0]);
+        EEPROM.write(97, qtime_7[1]);
+        EEPROM.write(98, qtime_7[3]);
+        EEPROM.write(99, qtime_7[4]);
 
-        EEPROM.write(89, qtime_7[0]);
-        EEPROM.write(90, qtime_7[1]);
-        EEPROM.write(91, qtime_7[3]);
-        EEPROM.write(92, qtime_7[4]);
-
-        EEPROM.write(93, qcheckbox1[0]);
-        EEPROM.write(94, qcheckbox2[0]);
-        EEPROM.write(95, qcheckbox3[0]);
-        EEPROM.write(96, qcheckbox4[0]);
-        EEPROM.write(97, qcheckbox5[0]);
-        EEPROM.write(98, qcheckbox6[0]);
-        EEPROM.write(99, qcheckbox7[0]);
         EEPROM.commit();
 
         content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
