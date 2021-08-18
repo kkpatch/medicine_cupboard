@@ -32,6 +32,9 @@ void setup()
 {
 
   Serial.begin(115200); //Initialising if(DEBUG)Serial Monitor
+  
+  pinMode(D1,INPUT);
+  
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
   WiFi.disconnect();
@@ -56,7 +59,7 @@ void setup()
   Serial.println("Reading EEPROM pass");
 
   String epass = "";
-  for (int i = 32; i < 96; ++i)
+  for (int i = 32; i < 64; ++i)
   {
     epass += char(EEPROM.read(i));
   }
@@ -91,19 +94,35 @@ void setup()
 void loop() {
   if ((WiFi.status() == WL_CONNECTED))
   {
-
-    for (int i = 0; i < 10; i++)
-    {
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(1000);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(1000);
+    if(digitalRead(D1) == 1){
+      WiFi.disconnect();  
+      Serial.println("Turning the HotSpot On");
+      launchWeb();
+      setupAP();// Setup HotSpot
+      Serial.println();
+      Serial.println("Waiting.");
+  
+      while ((WiFi.status() != WL_CONNECTED))
+      {
+        Serial.print(".");
+        delay(100);
+        server.handleClient();
+      }
     }
+//
+//    for (int i = 0; i < 10; i++)
+//    {
+//      digitalWrite(LED_BUILTIN, HIGH);
+//      delay(1000);
+//      digitalWrite(LED_BUILTIN, LOW);
+//      delay(1000);
+//    }
 
   }
-  else
-  {
-  }
+//  else
+//  {
+//  }
+  
 
 }
 
@@ -188,7 +207,7 @@ void setupAP(void)
   }
   st += "</select>";
   delay(100);
-  WiFi.softAP("techiesms", "");
+  WiFi.softAP("medicine_cupboard", "");
   Serial.println("softap");
   launchWeb();
   Serial.println("over");
@@ -201,13 +220,146 @@ void createWebServer()
 
       IPAddress ip = WiFi.softAPIP();
       String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
+
+
+
+
+
+
+
+
+      
       content = "<!DOCTYPE HTML>\r\n<html>Hello from ESP8266 at ";
       content += "<form action=\"/scan\" method=\"POST\"><input type=\"submit\" value=\"scan\"></form>";
       content += ipStr;
       content += "<p>";
       content += "</p><form method='get' action='setting'><label>SSID: </label>";
       content += st;
-      content += "<input name='pass' length=64><input type='submit'></form>";
+      content += "<p>";
+      content += "<input name='pass' length=64>";
+      content += "      <div>";
+      content += "        <input type='checkbox'  id='checkbox1' name='checkbox1'value='pre_morning' onclick='checkbox1_select()'>";
+      content += "        <label for='checkbox'>pre_morning</label>";
+      content += "        <input type='number'  id='hour_1' name='hour_1' min='0' max='23' size='1' style='display:none' placeholder='hh' />";
+      content += "        <input type='number'  id='minute_1' name='minute_1' min='0' max='60' size='1' style='display:none' placeholder='mm' />";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox2' name='checkbox2' value='post_morning' onclick='checkbox2_select()'>";
+      content += "        <label for='checkbox'>post_morning</label>";
+      content += "        <input type='number'  id='hour_2' name='hour_2' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_2' name='minute_2' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox3' name='checkbox3' value='pre_afternoon' onclick='checkbox3_select()'>";
+      content += "        <label for='checkbox'>pre_afternoon</label>";
+      content += "        <input type='number'  id='hour_3' name='hour_3' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_3' name='minute_3' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox4' name='checkbox4' value='post_afternoon' onclick='checkbox4_select()'>";
+      content += "        <label for='checkbox'>post_afternoon</label>";
+      content += "        <input type='number'  id='hour_4' name='hour_4' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_4' name='minute_4' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox5' name='checkbox5' value='pre_evening' onclick='checkbox5_select()'>";
+      content += "        <label for='checkbox'>pre_evening</label>";
+      content += "        <input type='number'  id='hour_5' name='hour_5' size='1' min='0' max='23' style='display:none' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_5' name='minute_5' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox6' name='checkbox6' value='post_evening' onclick='checkbox6_select()'>";
+      content += "        <label for='checkbox'>post_evening</label>";
+      content += "        <input type='number'  id='hour_6' name='hour_6' size='1' min='0' max='23' style='display:none' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_6' name='minute_6' min='0' max='60' style='display:none' size='1' placeholder='mm'>";
+      content += "      </div>";
+      content += "      <div>";
+      content += "        <input type='checkbox' id='checkbox7' name='checkbox7' value='before_sleep' onclick='checkbox7_select()'>";
+      content += "        <label for='checkbox'>before_sleep</label>  ";
+      content += "        <input type='number'  id='hour_7' name='hour_7' min='0' max='23' style='display:none' size='1' placeholder='hh'>";
+      content += "        <input type='number'  id='minute_7' name='minute_7' min='0' max='60' style='display:none' size='1' placeholder='mm'>";
+      content += "      </div>";
+      content += "<script>";
+      content += "function checkbox1_select() {";
+      content += "    if (document.getElementById('checkbox1').checked) {";
+      content += "        document.getElementById('hour_1').style.display = 'inline-block';";
+      content += "        ";
+      content += "        document.getElementById('minute_1').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_1').style.display = 'none';";
+      content += "        document.getElementById('hour_1').value = '';";
+      content += "        document.getElementById('minute_1').style.display = 'none';";
+      content += "        document.getElementById('minute_1').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox2_select() {";
+      content += "    if (document.getElementById('checkbox2').checked) {";
+      content += "        document.getElementById('hour_2').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_2').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_2').style.display = 'none';";
+      content += "        document.getElementById('hour_2').value = '';";
+      content += "        document.getElementById('minute_2').style.display = 'none';";
+      content += "        document.getElementById('minute_2').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox3_select() {";
+      content += "    if (document.getElementById('checkbox3').checked) {";
+      content += "        document.getElementById('hour_3').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_3').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_3').style.display = 'none';";
+      content += "        document.getElementById('hour_3').value = '';";
+      content += "        document.getElementById('minute_3').style.display = 'none';";
+      content += "        document.getElementById('minute_3').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox4_select() {";
+      content += "    if (document.getElementById('checkbox4').checked) {";
+      content += "        document.getElementById('hour_4').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_4').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_4').style.display = 'none';";
+      content += "        document.getElementById('hour_4').value = '';";
+      content += "        document.getElementById('minute_4').style.display = 'none';";
+      content += "        document.getElementById('minute_4').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox5_select() {";
+      content += "    if (document.getElementById('checkbox5').checked) {";
+      content += "        document.getElementById('hour_5').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_5').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_5').style.display = 'none';";
+      content += "        document.getElementById('hour_5').value = '';";
+      content += "        document.getElementById('minute_5').style.display = 'none';";
+      content += "        document.getElementById('minute_5').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox6_select() {";
+      content += "    if (document.getElementById('checkbox6').checked) {";
+      content += "        document.getElementById('hour_6').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_6').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_6').style.display = 'none';";
+      content += "        document.getElementById('hour_6').value = '';";
+      content += "        document.getElementById('minute_6').style.display = 'none';";
+      content += "        document.getElementById('minute_6').value = '';";
+      content += "    }";
+      content += "}";
+      content += "function checkbox7_select() {";
+      content += "    if (document.getElementById('checkbox7').checked) {";
+      content += "        document.getElementById('hour_7').style.display = 'inline-block';       ";
+      content += "        document.getElementById('minute_7').style.display = 'inline-block';";
+      content += "    } else {";
+      content += "        document.getElementById('hour_7').style.display = 'none';";
+      content += "        document.getElementById('hour_7').value = '';";
+      content += "        document.getElementById('minute_7').style.display = 'none';";
+      content += "        document.getElementById('minute_7').value = '';";
+      content += "    }";
+      content += "}";
+      content += "</script>";
+      content += "<input type='submit'></form>";
       content += "</html>";
       server.send(200, "text/html", content);
     });
@@ -223,6 +375,28 @@ void createWebServer()
     server.on("/setting", []() {
       String qsid = server.arg("ssid");
       String qpass = server.arg("pass");
+      String qhour_1 = server.arg("hour_1");
+      String qminute_1 = server.arg("minute_1");
+      String qhour_2 = server.arg("hour_2");
+      String qminute_2 = server.arg("minute_2");
+      String qhour_3 = server.arg("hour_3");
+      String qminute_3 = server.arg("minute_3");
+      String qhour_4 = server.arg("hour_4");
+      String qminute_4 = server.arg("minute_4");
+      String qhour_5 = server.arg("hour_5");
+      String qminute_5 = server.arg("minute_5");
+      String qhour_6 = server.arg("hour_6");
+      String qminute_6 = server.arg("minute_6");
+      String qhour_7 = server.arg("hour_7");
+      String qminute_7 = server.arg("minute_7");
+
+      String qcheckbox1 = server.arg("checkbox1");
+      String qcheckbox2 = server.arg("checkbox2");
+      String qcheckbox3 = server.arg("checkbox3");
+      String qcheckbox4 = server.arg("checkbox4");
+      String qcheckbox5 = server.arg("checkbox5");
+      String qcheckbox6 = server.arg("checkbox6");
+      String qcheckbox7 = server.arg("checkbox7");
       if (qsid.length() > 0 && qpass.length() > 0) {
         Serial.println("clearing eeprom");
         for (int i = 0; i < 96; ++i) {
@@ -247,6 +421,49 @@ void createWebServer()
           Serial.print("Wrote: ");
           Serial.println(qpass[i]);
         }
+
+        EEPROM.write(65, qhour_1[0]);
+        EEPROM.write(66, qhour_1[1]);
+        EEPROM.write(67, qminute_1[0]);
+        EEPROM.write(68, qminute_1[1]);
+
+        EEPROM.write(69, qhour_2[0]);
+        EEPROM.write(70, qhour_2[1]);
+        EEPROM.write(71, qminute_2[0]);
+        EEPROM.write(72, qminute_2[1]);
+
+        EEPROM.write(73, qhour_3[0]);
+        EEPROM.write(74, qhour_3[1]);
+        EEPROM.write(75, qminute_3[0]);
+        EEPROM.write(76, qminute_3[1]);
+
+        EEPROM.write(77, qhour_4[0]);
+        EEPROM.write(78, qhour_4[1]);
+        EEPROM.write(79, qminute_4[0]);
+        EEPROM.write(80, qminute_4[1]);
+
+        EEPROM.write(81, qhour_5[0]);
+        EEPROM.write(82, qhour_5[1]);
+        EEPROM.write(83, qminute_5[0]);
+        EEPROM.write(84, qminute_5[1]);
+
+        EEPROM.write(85, qhour_6[0]);
+        EEPROM.write(86, qhour_6[1]);
+        EEPROM.write(87, qminute_6[0]);
+        EEPROM.write(88, qminute_6[1]);
+
+        EEPROM.write(89, qhour_7[0]);
+        EEPROM.write(90, qhour_7[1]);
+        EEPROM.write(91, qminute_7[0]);
+        EEPROM.write(92, qminute_7[1]);
+
+        EEPROM.write(93, qcheckbox1[0]);
+        EEPROM.write(94, qcheckbox2[0]);
+        EEPROM.write(95, qcheckbox3[0]);
+        EEPROM.write(96, qcheckbox4[0]);
+        EEPROM.write(97, qcheckbox5[0]);
+        EEPROM.write(98, qcheckbox6[0]);
+        EEPROM.write(99, qcheckbox7[0]);
         EEPROM.commit();
 
         content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
