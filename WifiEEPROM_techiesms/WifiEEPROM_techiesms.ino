@@ -241,7 +241,7 @@ void createWebServer()
       content += "</p><form method='get' action='setting'><label>SSID: </label>";
       content += st;
       content += "<p>";
-      content += "<input name='pass' length=64>";
+      content += "<label>Password: </label><input type = 'password' name='pass' length=32>";
       content += "      <div>";
       content += "        <input type='checkbox'  id='checkbox1' name='checkbox1'value='A' onclick='checkbox1_select()'>";
       content += "        <label for='checkbox'>pre_morning</label>";
