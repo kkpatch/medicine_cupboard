@@ -32,7 +32,7 @@ void setup() {
     clk.begin();
 //    clk.fillByYMD(2021, 8, 19); //Jan 19,2013
 //    clk.fillByHMS(14, 35, 15); //15:28 30"
-//    clk.fillDayOfWeek(MON);//Saturday
+//    clk.fillDayOfWeek(THU);//Saturday
 //    clk.setTime();//write time to the RTC chip
 }
 void loop() {
