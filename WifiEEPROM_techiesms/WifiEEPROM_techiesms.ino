@@ -23,6 +23,13 @@ const char* passphrase = "text";
 String st;
 String content;
 
+bool connectedWifi_sendLineNotify = true;
+
+//-----------Use in encrypt_EEPROM()-------------
+char checkbox[7] = {'n','n','n','n','n','n','n'};
+int hours[7] = {0,0,0,0,0,0,0};
+int minutes[7] = {0,0,0,0,0,0,0};
+//-----------------------------------------------
 
 //Function Decalration
 bool testWifi(void);
@@ -48,6 +55,10 @@ void setup()
   Serial.println();
   Serial.println();
   Serial.println("Startup");
+
+  //--------Line Token------------
+  LINE.setToken(LINE_TOKEN);
+  //------------------------------
 
   //---------------------------------------- Read eeprom for ssid and pass
   Serial.println("Reading EEPROM ssid");
@@ -76,6 +87,48 @@ void setup()
   {
     Serial.println("Succesfully Connected!!!");
     LINE.notify("เชื่อมต่อแล้ว");
+    String eeprom_preEncrypt = "";
+    String eeprom_postEncrypt = "";
+    int cnt_numOfSelectCheckbox = 0;
+    for (int i = 65; i < 100; i++)
+    {
+      eeprom_preEncrypt += char(EEPROM.read(i));
+    }
+    encrypt_EEPROM(eeprom_preEncrypt);
+//    LINE.notify(cnt_numOfSelectCheckbox);
+    for(int i = 0;i<7;i++){
+      Serial.print("checkbox[" + String(i) +"] status: "); 
+      Serial.print(checkbox[i]);     
+      Serial.print("  hour[" + String(i) +"]: "); 
+      Serial.print(hours[i]);
+      Serial.print("  minute[" + String(i) +"]: "); 
+      Serial.print(minutes[i]);
+      Serial.println();
+    }
+    for (int i = 0; i < 7; i++)
+    {
+      if(checkbox[i] == 's'){
+        eeprom_postEncrypt += "\nชั้นที่";
+        eeprom_postEncrypt += String(i+1);
+        eeprom_postEncrypt += " ";
+        if(hours[i] == 0){
+          eeprom_postEncrypt += hours[i];
+          eeprom_postEncrypt += "0";
+        }
+        else{
+          eeprom_postEncrypt += hours[i];
+        }       
+        eeprom_postEncrypt += ":";
+        if(minutes[i] == 0){
+          eeprom_postEncrypt += minutes[i];
+          eeprom_postEncrypt += "0";
+        }
+        else{
+          eeprom_postEncrypt += minutes[i];
+        }      
+      }
+    }
+    LINE.notify(eeprom_postEncrypt);
     return;
   }
   else
@@ -244,49 +297,49 @@ void createWebServer()
       content += "<label>Password: </label><input type = 'password' name='pass' length=32>";
       content += "      <div>";
       content += "        <input type='checkbox'  id='checkbox1' name='checkbox1'value='A' onclick='checkbox1_select()'>";
-      content += "        <label for='checkbox'>pre_morning</label>";
+      content += "        <label for='checkbox'>Floor1</label>";
       content += "        <input type='time'  id='time_1' name='time_1' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_1' name='hour_1' min='0' max='23' size='1' style='display:none' placeholder='hh' />";
 //      content += "        <input type='number'  id='minute_1' name='minute_1' min='0' max='60' size='1' style='display:none' placeholder='mm' />";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox2' name='checkbox2' value='B' onclick='checkbox2_select()'>";
-      content += "        <label for='checkbox'>post_morning</label>";
+      content += "        <label for='checkbox'>Floor2</label>";
       content += "        <input type='time'  id='time_2' name='time_2' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_2' name='hour_2' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_2' name='minute_2' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox3' name='checkbox3' value='C' onclick='checkbox3_select()'>";
-      content += "        <label for='checkbox'>pre_afternoon</label>";
+      content += "        <label for='checkbox'>Floor3</label>";
       content += "        <input type='time'  id='time_3' name='time_3' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_3' name='hour_3' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_3' name='minute_3' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox4' name='checkbox4' value='D' onclick='checkbox4_select()'>";
-      content += "        <label for='checkbox'>post_afternoon</label>";
+      content += "        <label for='checkbox'>Floor4</label>";
       content += "        <input type='time'  id='time_4' name='time_4' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_4' name='hour_4' min='0' max='23' size='1' style='display:none' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_4' name='minute_4' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox5' name='checkbox5' value='E' onclick='checkbox5_select()'>";
-      content += "        <label for='checkbox'>pre_evening</label>";
+      content += "        <label for='checkbox'>Floor5</label>";
       content += "        <input type='time'  id='time_5' name='time_5' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_5' name='hour_5' size='1' min='0' max='23' style='display:none' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_5' name='minute_5' min='0'  max='60' size='1' style='display:none' placeholder='mm'>";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox6' name='checkbox6' value='F' onclick='checkbox6_select()'>";
-      content += "        <label for='checkbox'>post_evening</label>";
+      content += "        <label for='checkbox'>Floor6</label>";
       content += "        <input type='time'  id='time_6' name='time_6' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_6' name='hour_6' size='1' min='0' max='23' style='display:none' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_6' name='minute_6' min='0' max='60' style='display:none' size='1' placeholder='mm'>";
       content += "      </div>";
       content += "      <div>";
       content += "        <input type='checkbox' id='checkbox7' name='checkbox7' value='G' onclick='checkbox7_select()'>";
-      content += "        <label for='checkbox'>before_sleep</label>";
+      content += "        <label for='checkbox'>Floor7</label>";
       content += "        <input type='time'  id='time_7' name='time_7' style='display:none'/>";
 //      content += "        <input type='number'  id='hour_7' name='hour_7' min='0' max='23' style='display:none' size='1' placeholder='hh'>";
 //      content += "        <input type='number'  id='minute_7' name='minute_7' min='0' max='60' style='display:none' size='1' placeholder='mm'>";
@@ -304,6 +357,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_1').style.display = 'none';";
 //      content += "        document.getElementById('minute_1').value = '';";
       content += "        document.getElementById('time_1').style.display = 'none';";
+      content += "        document.getElementById('time_1').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox2_select() {";
@@ -317,6 +371,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_2').style.display = 'none';";
 //      content += "        document.getElementById('minute_2').value = '';";
       content += "        document.getElementById('time_2').style.display = 'none';";
+      content += "        document.getElementById('time_2').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox3_select() {";
@@ -330,6 +385,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_3').style.display = 'none';";
 //      content += "        document.getElementById('minute_3').value = '';";
       content += "        document.getElementById('time_3').style.display = 'none';";
+      content += "        document.getElementById('time_3').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox4_select() {";
@@ -343,6 +399,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_4').style.display = 'none';";
 //      content += "        document.getElementById('minute_4').value = '';";
       content += "        document.getElementById('time_4').style.display = 'none';";
+      content += "        document.getElementById('time_4').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox5_select() {";
@@ -356,6 +413,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_5').style.display = 'none';";
 //      content += "        document.getElementById('minute_5').value = '';";
       content += "        document.getElementById('time_5').style.display = 'none';";
+      content += "        document.getElementById('time_5').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox6_select() {";
@@ -369,6 +427,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_6').style.display = 'none';";
 //      content += "        document.getElementById('minute_6').value = '';";
       content += "        document.getElementById('time_6').style.display = 'none';";
+      content += "        document.getElementById('time_6').value = '';";
       content += "    }";
       content += "}";
       content += "function checkbox7_select() {";
@@ -382,6 +441,7 @@ void createWebServer()
 //      content += "        document.getElementById('minute_7').style.display = 'none';";
 //      content += "        document.getElementById('minute_7').value = '';";
       content += "        document.getElementById('time_7').style.display = 'none';";
+      content += "        document.getElementById('time_7').value = '';";
       content += "    }";
       content += "}";
       content += "</script>";
@@ -517,4 +577,52 @@ void createWebServer()
 
     });
   } 
+}
+int encrypt_EEPROM(String str){
+  int cnt = 0;
+  int cnt3 = 0;
+  int cnt_numOfSelectCheckbox = 0;
+  int int_tmp;
+  String mode = "hour";
+  for(int i = 0;i<7;i++){
+    if(str[i]>64 && str[i]<72){
+      checkbox[str[i]-65] = 's';  
+      cnt_numOfSelectCheckbox += 1;      
+    }
+  }
+    for(int i = cnt_numOfSelectCheckbox;i<str.length();i++){
+      if(str[i]>47 && str[i]<58){        
+        if(cnt % 2 == 0){
+           int_tmp = str[i] - '0';
+           int_tmp = int_tmp*10;
+        }
+        if(cnt % 2 == 1){
+            int_tmp = int_tmp+(str[i] - '0');
+            if(mode == "hour" ){
+              while(checkbox[cnt3]!= 's'){
+                cnt3+=1;
+              }
+              hours[cnt3] = int_tmp;
+              mode = "minute";
+           }
+            else if(mode == "minute"){
+              minutes[cnt3] = int_tmp;
+              mode = "hour";
+              cnt3+=1;
+          }
+
+        }
+        cnt+=1;
+      }
+    }
+  for(int i = 0;i<7;i++){
+    Serial.print("checkbox[" + String(i) +"] status: "); 
+    Serial.print(checkbox[i]);     
+    Serial.print("  hour[" + String(i) +"]: "); 
+    Serial.print(hours[i]);
+    Serial.print("  minute[" + String(i) +"]: "); 
+    Serial.print(minutes[i]);
+    Serial.println();
+  }
+  return cnt_numOfSelectCheckbox;
 }

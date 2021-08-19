@@ -30,8 +30,8 @@ DS1307 clk;//define a object of DS1307 class
 void setup() {
     Serial.begin(115200);
     clk.begin();
-//    clk.fillByYMD(2021, 8, 17); //Jan 19,2013
-//    clk.fillByHMS(16, 15, 15); //15:28 30"
+//    clk.fillByYMD(2021, 8, 19); //Jan 19,2013
+//    clk.fillByHMS(14, 35, 15); //15:28 30"
 //    clk.fillDayOfWeek(MON);//Saturday
 //    clk.setTime();//write time to the RTC chip
 }

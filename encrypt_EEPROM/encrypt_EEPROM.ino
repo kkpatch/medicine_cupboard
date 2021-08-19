@@ -1,11 +1,10 @@
-String str="ACDFG00540130023014031130";
+String str="ACDEG00540130023014031130";
 //String str="1503";
 char checkbox[7] = {'n','n','n','n','n','n','n'};
 int hours[7] = {0,0,0,0,0,0,0};
 int minutes[7] = {0,0,0,0,0,0,0};
 
 int cnt = 0;
-int cnt2 = 0;
 int cnt3 = 0;
 int cnt_numOfSelectCheckbox = 0;
 int int_tmp;
