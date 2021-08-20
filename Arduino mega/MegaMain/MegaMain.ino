@@ -3,6 +3,9 @@
 #include <Wire.h>
 #include "DS1307.h"
 
+#include <SoftwareSerial.h>
+SoftwareSerial mySerial(10, 11); // RX, TX
+
 PCF8574 i2c_LED(0x23);
 DS1307 clk;//define a object of DS1307 class
 
@@ -15,6 +18,10 @@ int check[7] = {0,0,0,0,0,0,0};
 
 void setup() {
   Serial.begin(115200);
+
+//--------SWSerial setup--------  
+  mySerial.begin(115200);
+//------------------------------
   
   // put your setup code here, to run once:
 //--------12c_LED setup---------
@@ -50,6 +57,8 @@ void setup() {
 //  clk.fillDayOfWeek(TUE);//Saturday
 //  clk.setTime();//write time to the RTC chip
 //------------------------------    
+
+  mySerial.println("Hello, world?");
 }
 
 void ledWriteHigh(int pin){

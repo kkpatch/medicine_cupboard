@@ -9,7 +9,7 @@ int delayTime = 250;
 void setup() {
   // put your setup code here, to run once:
   mySerial.begin(115200);
-  Serial.begin(9600);
+  Serial.begin(115200);
   for(i=0;i<7;i++){
     m[i].attach(i+2);
     m[i].write(0);

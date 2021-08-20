@@ -11,6 +11,10 @@
 #include <ESP8266WebServer.h>
 #include <EEPROM.h>
 
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(5, 4); // RX, TX
+
 //Variables
 int i = 0;
 int statusCode;
@@ -30,7 +34,7 @@ ESP8266WebServer server(80);
 
 void setup()
 {
-  pinMode(D5,INPUT);
+  pinMode(D6,INPUT);
   Serial.begin(115200); //Initialising if(DEBUG)Serial Monitor
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
@@ -41,6 +45,9 @@ void setup()
   Serial.println();
   Serial.println();
   Serial.println("Startup");
+
+  // set the data rate for the SoftwareSerial port
+  mySerial.begin(115200);
 
   //---------------------------------------- Read eeprom for ssid and pass
   Serial.println("Reading EEPROM ssid");
@@ -56,13 +63,24 @@ void setup()
   Serial.println("Reading EEPROM pass");
 
   String epass = "";
-  for (int i = 32; i < 96; ++i)
+  for (int i = 32; i < 64; ++i)
   {
     epass += char(EEPROM.read(i));
   }
   Serial.print("PASS: ");
   Serial.println(epass);
 
+  String echeckbox = "";
+  for (int i = 65; i < 73; ++i)
+  {
+    echeckbox += char(EEPROM.read(i));
+  }
+  Serial.print("Checkbox: ");
+  Serial.println(echeckbox);
+  for(int i = 0;i<echeckbox.length();i++){
+    mySerial.write(echeckbox[i]);
+  }
+  
 
   WiFi.begin(esid.c_str(), epass.c_str());
   if (testWifi())
@@ -73,7 +91,7 @@ void setup()
 
 }
 void loop() {
-  if(digitalRead(D5) == 1){
+  if(digitalRead(D6) == 1){
     Serial.println("Turning the HotSpot On");
     launchWeb();
     setupAP();// Setup HotSpot  
@@ -84,6 +102,9 @@ void loop() {
       delay(100);
       server.handleClient();
     }    
+  }
+  if (mySerial.available()) {
+    Serial.write(mySerial.read());
   }
 }
 
