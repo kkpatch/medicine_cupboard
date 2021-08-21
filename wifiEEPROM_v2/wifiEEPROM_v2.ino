@@ -84,8 +84,7 @@ void setup()
   }
   Serial.print("Checkbox: ");
   Serial.println(echeckbox);
-//  mySerial.write("hello");
-//  mySerial.write(echeckbox.c_str());
+  mySerial.write('H');
   for(int i = 0;i<echeckbox.length();i++){
     mySerial.write(echeckbox[i]);
   }
@@ -144,6 +143,11 @@ void loop() {
     }    
   }
   if (mySerial.available()) {
+    char lineNotify;
+    lineNotify = mySerial.read();
+    if(lineNotify == 'Z'){
+      LINE.notify("ขณะนี้ ผู้รับบริการได้รับยาเรียบร้อยแล้ว");  
+    }
     Serial.write(mySerial.read());
   }
 }
