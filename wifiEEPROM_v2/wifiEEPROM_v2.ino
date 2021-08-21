@@ -16,7 +16,12 @@
 #include <TridentTD_LineNotify.h>
 #define LINE_TOKEN "mBNOXD1bQbQHRhooALfaodwE7vdxGGhf6pBpthGj28u"
 
-SoftwareSerial mySerial(5, 4); // RX, TX
+#include <Wire.h>
+#include "DS1307.h"
+
+
+SoftwareSerial mySerial(14, 12); // RX, TX
+DS1307 clk;//define a object of DS1307 class
 
 //Variables
 int i = 0;
@@ -27,17 +32,32 @@ String st;
 String content;
 
 
+unsigned long period = 1000; 
+unsigned long last_time = 0; 
+
 //Function Decalration
 bool testWifi(void);
 void launchWeb(void);
 void setupAP(void);
+
+int timeInterval_Hour[7] = {11,7,11,12,16,17,20};
+int timeInterval_Minute[7] = {52,30,30,30,30,30,0};
+int check[7] = {0,0,0,0,0,0,0};
 
 //Establishing Local server at port 80 whenever required
 ESP8266WebServer server(80);
 
 void setup()
 {
-  pinMode(D6,INPUT);
+  pinMode(D7,INPUT);
+
+//  Serial.begin(115200);
+//  clk.begin();
+////    clk.fillByYMD(2021, 8, 21); //Jan 19,2013
+////    clk.fillByHMS(14, 03, 45); //15:28 30"
+////    clk.fillDayOfWeek(SAT);//Saturday
+////    clk.setTime();//write time to the RTC chip
+  
   Serial.begin(115200); //Initialising if(DEBUG)Serial Monitor
   Serial.println();
   Serial.println("Disconnecting previously connected WiFi");
@@ -130,7 +150,7 @@ void setup()
 
 }
 void loop() {
-  if(digitalRead(D6) == 1){
+  if(digitalRead(D7) == 1){
     Serial.println("Turning the HotSpot On");
     launchWeb();
     setupAP();// Setup HotSpot  
@@ -150,6 +170,25 @@ void loop() {
     }
     Serial.write(mySerial.read());
   }
+
+//    clk.getTime();
+//
+//    Serial.print(clk.hour);
+//    Serial.print(":");
+//    Serial.print(clk.minute);
+//    Serial.print(":");
+//    Serial.print(clk.second);
+//    Serial.print(" ");
+//
+//  
+//  for(int i = 0;i<7;i++){
+//    if(clk.hour == timeInterval_Hour[i] && clk.minute == timeInterval_Minute[i]){
+//      if(check[i] == 0){
+//        mySerial.print(i);
+//      }
+//    }
+//  }
+  
 }
 
 
