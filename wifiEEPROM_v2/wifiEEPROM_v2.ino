@@ -13,6 +13,9 @@
 
 #include <SoftwareSerial.h>
 
+#include <TridentTD_LineNotify.h>
+#define LINE_TOKEN "mBNOXD1bQbQHRhooALfaodwE7vdxGGhf6pBpthGj28u"
+
 SoftwareSerial mySerial(5, 4); // RX, TX
 
 //Variables
@@ -49,6 +52,10 @@ void setup()
   // set the data rate for the SoftwareSerial port
   mySerial.begin(115200);
 
+  //--------Line Token------------
+  LINE.setToken(LINE_TOKEN);
+  //------------------------------
+
   //---------------------------------------- Read eeprom for ssid and pass
   Serial.println("Reading EEPROM ssid");
 
@@ -77,6 +84,8 @@ void setup()
   }
   Serial.print("Checkbox: ");
   Serial.println(echeckbox);
+//  mySerial.write("hello");
+//  mySerial.write(echeckbox.c_str());
   for(int i = 0;i<echeckbox.length();i++){
     mySerial.write(echeckbox[i]);
   }
@@ -86,6 +95,37 @@ void setup()
   if (testWifi())
   {
     Serial.println("Succesfully Connected!!!");
+    LINE.notify("Connected");
+    String select_time_interval = "\nTime Interval: ";
+    for(int i = 0; i < echeckbox.length();i++){
+      if(i != echeckbox.length() - 1){
+        if(echeckbox[i] >64 && echeckbox[i]<72){
+          select_time_interval += "\n";          
+        }
+      }
+      if(echeckbox[i] == 'A'){
+        select_time_interval += "  Before Breakfast";        
+      }
+      if(echeckbox[i] == 'B'){
+        select_time_interval += "  After Breakfast";        
+      }
+      if(echeckbox[i] == 'C'){
+        select_time_interval += "  Before Lunch";        
+      }
+      if(echeckbox[i] == 'D'){
+        select_time_interval += "  After Lunch";        
+      }
+      if(echeckbox[i] == 'E'){
+        select_time_interval += "  Before Dinner";        
+      }
+      if(echeckbox[i] == 'F'){
+        select_time_interval += "  After Dinner";        
+      }
+      if(echeckbox[i] == 'G'){
+        select_time_interval += "  Before Bedtime";        
+      }
+    }
+    LINE.notify(select_time_interval);
     return;
   }
 
@@ -276,6 +316,7 @@ void createWebServer()
           Serial.print("Wrote: ");
           Serial.println(qpass[i]);
         }
+      }
         Serial.println(qcheckbox1);
         Serial.println("");
         Serial.println(qcheckbox2);
@@ -303,11 +344,12 @@ void createWebServer()
         content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
         statusCode = 200;
         ESP.reset();
-      } else {
-        content = "{\"Error\":\"404 not found\"}";
-        statusCode = 404;
-        Serial.println("Sending 404");
-      }
+
+//      else {
+//        content = "{\"Error\":\"404 not found\"}";
+//        statusCode = 404;
+//        Serial.println("Sending 404");
+//      }
       server.sendHeader("Access-Control-Allow-Origin", "*");
       server.send(statusCode, "application/json", content);
 
