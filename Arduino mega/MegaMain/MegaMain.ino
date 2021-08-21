@@ -28,12 +28,24 @@ unsigned long period = 1000;
 unsigned long last_time = 0; 
 
 void setup() {
+//-------Buzzer setup-----------
+  pinMode(A0, OUTPUT);
+//------------------------------
+  
   Serial.begin(115200);
+  
+//--------RTC setup-------------
+  clk.begin();
+//  clk.fillByYMD(2021, 8, 17); //Jan 19,2013
+//  clk.fillByHMS(22, 54, 30); //15:28 30"
+//  clk.fillDayOfWeek(TUE);//Saturday
+//  clk.setTime();//write time to the RTC chip
+//------------------------------    
 
 //--------SWSerial setup--------  
   mySerial.begin(115200);
 //------------------------------
-  
+//  
   // put your setup code here, to run once:
 //--------12c_LED setup---------
   i2c_LED.pinMode(P0, OUTPUT, LOW);
@@ -46,7 +58,7 @@ void setup() {
 
   i2c_LED.begin();
 //------------------------------
-
+//
 //-----MagnetSensor setup-------
   pinMode(31, INPUT);
   pinMode(33, INPUT);
@@ -57,18 +69,10 @@ void setup() {
   pinMode(43, INPUT);
 //------------------------------
 
-//-------Buzzer setup-----------
-  pinMode(A0, OUTPUT);
-//------------------------------
 
 
-//--------RTC setup-------------
-  clk.begin();
-//  clk.fillByYMD(2021, 8, 17); //Jan 19,2013
-//  clk.fillByHMS(22, 54, 30); //15:28 30"
-//  clk.fillDayOfWeek(TUE);//Saturday
-//  clk.setTime();//write time to the RTC chip
-//------------------------------    
+
+
 
 //  mySerial.println("Hello, world?");
 //-------Servo setup------------
@@ -111,25 +115,25 @@ void ledWriteLow(){
 }
 
 void loop() {
-//  // put your main code here, to run repeatedly:    
-//  if (mySerial.available()) {
-//      char tmp_mySerial = mySerial.read();
-//      Serial.write(tmp_mySerial);
-//      if(tmp_mySerial == 'H'){
-//        for (int i = 0; i < 10; i++) {
-//          EEPROM.write(i, 0);
-//        }
-//        for(int i = 0;i<7;i++){
-//          cupboardSelected[i] = 'n';
-//        }
-//      }
-//      else if(tmp_mySerial > 64 && tmp_mySerial < 91){
-//        EEPROM.write(tmp_mySerial-65, tmp_mySerial);
-//        cupboardSelected[tmp_mySerial - 65] = 's';
-//      }
-//
-//      
-//    }
+  // put your main code here, to run repeatedly:    
+  if (mySerial.available()) {
+      char tmp_mySerial = mySerial.read();
+      Serial.write(tmp_mySerial);
+      if(tmp_mySerial == 'H'){
+        for (int i = 0; i < 10; i++) {
+          EEPROM.write(i, 0);
+        }
+        for(int i = 0;i<7;i++){
+          cupboardSelected[i] = 'n';
+        }
+      }
+      else if(tmp_mySerial > 64 && tmp_mySerial < 91){
+        EEPROM.write(tmp_mySerial-65, tmp_mySerial);
+        cupboardSelected[tmp_mySerial - 65] = 's';
+      }
+
+      
+    }
   if( millis() - last_time > period) {
     clk.getTime();
 
@@ -155,122 +159,122 @@ void loop() {
       }
    }
   }
-//  if(clk.hour == 7 && clk.minute == 45){
-//    if(cupboardSelected[0] == 's'){
-//      if(check[0] == 0){
-//        ledWriteHigh(P0);
-//        tone(A0,600);
-//        check[0] = 1;      
-//        //----Set servo to unlock---------
-//        m[0].write(0);
+  if(clk.hour == 7 && clk.minute == 45){
+    if(cupboardSelected[0] == 's'){
+      if(check[0] == 0){
+        ledWriteHigh(P0);
+        tone(A0,600);
+        check[0] = 1;      
+        //----Set servo to unlock---------
+        m[0].write(0);
+      //--------------------------------
+      }      
+    }
+
+  }
+  if(clk.hour == 9 && clk.minute == 0){
+    if(cupboardSelected[1] == 's'){
+      if(check[1] == 0){
+        ledWriteHigh(P1);
+        tone(A0,600);
+        check[1] = 1;
+        m[1].write(0);
+      }
+    }      
+  }
+  if(clk.hour == 11 && clk.minute == 45){
+    if(cupboardSelected[2] == 's'){
+      if(check[2] == 0){
+        ledWriteHigh(P2);
+        tone(A0,600);
+        check[2] = 1;
+        m[2].write(0);
+      }
+    }
+  }
+  if(clk.hour == 13 && clk.minute == 0){
+    if(cupboardSelected[3] == 's'){
+      if(check[3] == 0){
+        ledWriteHigh(P3);
+        tone(A0,600);
+        check[3] = 1;
+        m[3].write(0);
+      }
+    }
+  }
+  if(clk.hour == 15 && clk.minute == 58){
+    if(cupboardSelected[4] == 's'){
+      if(check[4] == 0){
+        ledWriteHigh(P4);
+        tone(A0,600);
+        check[4] = 1;
+        m[4].write(0);
+      }
+    }
+  }
+  if(clk.hour == 16 && clk.minute == 15){
+    if(cupboardSelected[0] == 's'){
+      if(check[5] == 0){
+        ledWriteHigh(P5);
+        tone(A0,600);
+        check[5] = 1;
+        m[5].write(0);
+      }
+    }    
+  }
+  if(clk.hour == 16 && clk.minute == 51){
+    if(cupboardSelected[6] == 's'){
+      if(check[6] == 0){
+        ledWriteHigh(P6);
+        tone(A0,600);
+        check[6] = 1;
+        m[6].write(0);      
+      }
+    }
+  }
+  if(clk.hour == 0 && clk.minute == 0){
+    for(int i = 0;i<7;i++){
+      check[i] = 0;
+    }
+  }
+
+  for(int i = 0;i<7;i++){
+    if(digitalRead(31+(2*i)) == 0){
+      cupboardState_now[i] = 'o';
+    }
+  }
+  for(int i = 0;i<7;i++){
+    if(digitalRead(31+(2*i)) == 1){
+      cupboardState_now[i] = 'c';
+    }
+  }
+
+  for(int i = 0;i<7;i++){
+    if(cupboardState_pre[i] == 'c' && cupboardState_now[i] == 'o'){
+      Serial.print("floor "+String(i)+" close then open");
+      Serial.println();
+    }
+  }
+  for(int i = 0;i<7;i++){
+    if(cupboardState_pre[i] == 'o' && cupboardState_now[i] == 'c'){
+      if(check[i] == 1){
+        Serial.print("floor "+String(i)+" open then close");
+        Serial.println();
+        noTone(A0);
+        ledWriteLow();
+        //--------Line notify-------------
+        mySerial.write('Z');
+        //--------------------------------      
+//      //-----Set servo to lock----------
+        m[i].write(90);
 //      //--------------------------------
-//      }      
-//    }
-//
-//  }
-//  if(clk.hour == 9 && clk.minute == 0){
-//    if(cupboardSelected[1] == 's'){
-//      if(check[1] == 0){
-//        ledWriteHigh(P1);
-//        tone(A0,600);
-//        check[1] = 1;
-//        m[1].write(0);
-//      }
-//    }      
-//  }
-//  if(clk.hour == 11 && clk.minute == 45){
-//    if(cupboardSelected[2] == 's'){
-//      if(check[2] == 0){
-//        ledWriteHigh(P2);
-//        tone(A0,600);
-//        check[2] = 1;
-//        m[2].write(0);
-//      }
-//    }
-//  }
-//  if(clk.hour == 13 && clk.minute == 0){
-//    if(cupboardSelected[3] == 's'){
-//      if(check[3] == 0){
-//        ledWriteHigh(P3);
-//        tone(A0,600);
-//        check[3] = 1;
-//        m[3].write(0);
-//      }
-//    }
-//  }
-//  if(clk.hour == 15 && clk.minute == 58){
-//    if(cupboardSelected[4] == 's'){
-//      if(check[4] == 0){
-//        ledWriteHigh(P4);
-//        tone(A0,600);
-//        check[4] = 1;
-//        m[4].write(0);
-//      }
-//    }
-//  }
-//  if(clk.hour == 16 && clk.minute == 15){
-//    if(cupboardSelected[0] == 's'){
-//      if(check[5] == 0){
-//        ledWriteHigh(P5);
-//        tone(A0,600);
-//        check[5] = 1;
-//        m[5].write(0);
-//      }
-//    }    
-//  }
-//  if(clk.hour == 16 && clk.minute == 51){
-//    if(cupboardSelected[6] == 's'){
-//      if(check[6] == 0){
-//        ledWriteHigh(P6);
-//        tone(A0,600);
-//        check[6] = 1;
-//        m[6].write(0);      
-//      }
-//    }
-//  }
-//  if(clk.hour == 0 && clk.minute == 0){
-//    for(int i = 0;i<7;i++){
-//      check[i] = 0;
-//    }
-//  }
-//
-//  for(int i = 0;i<7;i++){
-//    if(digitalRead(31+(2*i)) == 0){
-//      cupboardState_now[i] = 'o';
-//    }
-//  }
-//  for(int i = 0;i<7;i++){
-//    if(digitalRead(31+(2*i)) == 1){
-//      cupboardState_now[i] = 'c';
-//    }
-//  }
-//
-//  for(int i = 0;i<7;i++){
-//    if(cupboardState_pre[i] == 'c' && cupboardState_now[i] == 'o'){
-//      Serial.print("floor "+String(i)+" close then open");
-//      Serial.println();
-//    }
-//  }
-//  for(int i = 0;i<7;i++){
-//    if(cupboardState_pre[i] == 'o' && cupboardState_now[i] == 'c'){
-//      if(check[i] == 1){
-//        Serial.print("floor "+String(i)+" open then close");
-//        Serial.println();
-//        noTone(A0);
-//        ledWriteLow();
-//        //--------Line notify-------------
-//        mySerial.write('Z');
-//        //--------------------------------      
-////      //-----Set servo to lock----------
-//        m[i].write(90);
-////      //--------------------------------
-//      }
-//
-//    }
-//  }
-//  
-//  for(int i = 0;i<7;i++){
-//    cupboardState_pre[i] = cupboardState_now[i];    
-//  }
+      }
+
+    }
+  }
+  
+  for(int i = 0;i<7;i++){
+    cupboardState_pre[i] = cupboardState_now[i];    
+  }
 //  delay(1000);
 }
