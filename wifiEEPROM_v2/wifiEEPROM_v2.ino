@@ -14,7 +14,7 @@
 #include <SoftwareSerial.h>
 
 #include <TridentTD_LineNotify.h>
-#define LINE_TOKEN "mBNOXD1bQbQHRhooALfaodwE7vdxGGhf6pBpthGj28u"
+//#define LINE_TOKEN "mBNOXD1bQbQHRhooALfaodwE7vdxGGhf6pBpthGj28u"
 
 #include <Wire.h>
 #include "DS1307.h"
@@ -72,10 +72,6 @@ void setup()
   // set the data rate for the SoftwareSerial port
   mySerial.begin(115200);
 
-  //--------Line Token------------
-  LINE.setToken(LINE_TOKEN);
-  //------------------------------
-
   //---------------------------------------- Read eeprom for ssid and pass
   Serial.println("Reading EEPROM ssid");
 
@@ -104,11 +100,21 @@ void setup()
   }
   Serial.print("Checkbox: ");
   Serial.println(echeckbox);
-  mySerial.write('H');
+  mySerial.write('H');      //Send 'H' to reset Mega EEPROM
   for(int i = 0;i<echeckbox.length();i++){
     mySerial.write(echeckbox[i]);
   }
-  
+  String elineToken = "";
+  for (int i = 75; i < 120; ++i)
+  {
+    elineToken += char(EEPROM.read(i));
+  }
+  Serial.print("Line Token: ");
+  Serial.println(elineToken);
+
+  //--------Line Token------------
+  LINE.setToken(elineToken.c_str());
+  //------------------------------
 
   WiFi.begin(esid.c_str(), epass.c_str());
   if (testWifi())
@@ -163,10 +169,18 @@ void loop() {
     }    
   }
   if (mySerial.available()) {
-    char lineNotify;
+    char mySerial_char;
     lineNotify = mySerial.read();
-    if(lineNotify == 'Z'){
+    if(mySerial_char == 'Z'){
       LINE.notify("ขณะนี้ ผู้รับบริการได้รับยาเรียบร้อยแล้ว");  
+    }
+    if(mySerial_char == 'X'){
+      // buzzer ดัง 
+      
+    }
+    if(mySerial_char == 'Y'){
+      // buzzer ดับ 
+      
     }
     Serial.write(mySerial.read());
   }
@@ -265,7 +279,7 @@ void setupAP(void)
     st += "</option>";
   }
   delay(100);
-  WiFi.softAP("techiesms", "");
+  WiFi.softAP("Medcup", "");
   Serial.println("softap");
   launchWeb();
   Serial.println("over");
@@ -289,7 +303,8 @@ void createWebServer()
       content += "  <div>";  
       content += "  <br><label>Password: </label><input type = 'password' name='pass' length=32>";
       content += "      </div>";
-      content += "      <div>";  
+      content += "      <div>";
+      content += "        <br><label>Line Token: </label><input type = 'text' id='lineToken' name='lineToken' size = 40>";   
       content += "      </div>";
       content += "      <div>";  
       content += "        <br><label>Select Time Interval </label>"; 
@@ -334,6 +349,8 @@ void createWebServer()
       String qcheckbox5 = server.arg("checkbox5");
       String qcheckbox6 = server.arg("checkbox6");
       String qcheckbox7 = server.arg("checkbox7");
+
+      String qlineToken = server.arg("lineToken");
       
       if (qsid.length() > 0 && qpass.length() > 0) {
         Serial.println("clearing eeprom");
@@ -382,6 +399,15 @@ void createWebServer()
         EEPROM.write(69, qcheckbox5[0]);
         EEPROM.write(70, qcheckbox6[0]);
         EEPROM.write(71, qcheckbox7[0]);
+
+        if(qlineToken.length() > 0){
+          for(int i = 0;i < qlineToken.length(); i++){
+            EEPROM.write(75 + i, qlineToken[i]);
+            Serial.print("Wrote: ");
+            Serial.println(qlineToken[i]);            
+          }
+        }
+        
         EEPROM.commit();
 
         content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
