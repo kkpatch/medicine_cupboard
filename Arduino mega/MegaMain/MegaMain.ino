@@ -28,9 +28,9 @@ unsigned long period = 1000;
 unsigned long last_time = 0; 
 
 void setup() {
-//-------Buzzer setup-----------
-  pinMode(A0, OUTPUT);
-//------------------------------
+////-------Buzzer setup-----------
+//  pinMode(A0, OUTPUT);
+////------------------------------
   
   Serial.begin(115200);
   
@@ -163,7 +163,7 @@ void loop() {
     if(cupboardSelected[0] == 's'){
       if(check[0] == 0){
         ledWriteHigh(P0);
-        tone(A0,600);
+//        tone(A0,600);
         check[0] = 1;      
         //----Set servo to unlock---------
         m[0].write(0);
@@ -176,7 +176,7 @@ void loop() {
     if(cupboardSelected[1] == 's'){
       if(check[1] == 0){
         ledWriteHigh(P1);
-        tone(A0,600);
+//        tone(A0,600);
         check[1] = 1;
         m[1].write(0);
       }
@@ -186,7 +186,7 @@ void loop() {
     if(cupboardSelected[2] == 's'){
       if(check[2] == 0){
         ledWriteHigh(P2);
-        tone(A0,600);
+//        tone(A0,600);
         check[2] = 1;
         m[2].write(0);
       }
@@ -196,7 +196,7 @@ void loop() {
     if(cupboardSelected[3] == 's'){
       if(check[3] == 0){
         ledWriteHigh(P3);
-        tone(A0,600);
+//        tone(A0,600);
         check[3] = 1;
         m[3].write(0);
       }
@@ -206,7 +206,7 @@ void loop() {
     if(cupboardSelected[4] == 's'){
       if(check[4] == 0){
         ledWriteHigh(P4);
-        tone(A0,600);
+//        tone(A0,600);
         check[4] = 1;
         m[4].write(0);
       }
@@ -216,7 +216,7 @@ void loop() {
     if(cupboardSelected[0] == 's'){
       if(check[5] == 0){
         ledWriteHigh(P5);
-        tone(A0,600);
+//        tone(A0,600);
         check[5] = 1;
         m[5].write(0);
       }
@@ -226,7 +226,7 @@ void loop() {
     if(cupboardSelected[6] == 's'){
       if(check[6] == 0){
         ledWriteHigh(P6);
-        tone(A0,600);
+//        tone(A0,600);
         check[6] = 1;
         m[6].write(0);      
       }
@@ -260,7 +260,7 @@ void loop() {
       if(check[i] == 1){
         Serial.print("floor "+String(i)+" open then close");
         Serial.println();
-        noTone(A0);
+//        noTone(A0);
         ledWriteLow();
         //--------Line notify-------------
         mySerial.write('Z');
