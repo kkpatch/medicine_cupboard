@@ -49,7 +49,7 @@ ESP8266WebServer server(80);
 
 void setup()
 {
-  pinMode(D7,INPUT);
+  pinMode(D8,INPUT);
 
 //  Serial.begin(115200);
 //  clk.begin();
@@ -156,7 +156,7 @@ void setup()
 
 }
 void loop() {
-  if(digitalRead(D7) == 1){
+  if(digitalRead(D8) == 1){
     Serial.println("Turning the HotSpot On");
     launchWeb();
     setupAP();// Setup HotSpot  
@@ -170,7 +170,7 @@ void loop() {
   }
   if (mySerial.available()) {
     char mySerial_char;
-    lineNotify = mySerial.read();
+    mySerial_char = mySerial.read();
     if(mySerial_char == 'Z'){
       LINE.notify("ขณะนี้ ผู้รับบริการได้รับยาเรียบร้อยแล้ว");  
     }
