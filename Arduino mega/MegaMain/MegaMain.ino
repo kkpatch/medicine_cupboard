@@ -27,19 +27,27 @@ Servo m[7];
 unsigned long period = 1000; 
 unsigned long last_time = 0; 
 
+void ledWriteHigh(int);
+void ledWriteLow();
+void showFloorSelected();
+
 void setup() {
 ////-------Buzzer setup-----------
 //  pinMode(A0, OUTPUT);
 ////------------------------------
+
+//-----Open All Floor setup-----
+//  pinMode(, INPUT);
+//------------------------------
   
   Serial.begin(115200);
   
 //--------RTC setup-------------
   clk.begin();
-//  clk.fillByYMD(2021, 8, 17); //Jan 19,2013
-//  clk.fillByHMS(22, 54, 30); //15:28 30"
-//  clk.fillDayOfWeek(TUE);//Saturday
-//  clk.setTime();//write time to the RTC chip
+  clk.fillByYMD(2021, 8, 24); //Jan 19,2013
+  clk.fillByHMS(1, 47, 30); //15:28 30"
+  clk.fillDayOfWeek(TUE);//Saturday
+  clk.setTime();//write time to the RTC chip
 //------------------------------    
 
 //--------SWSerial setup--------  
@@ -69,11 +77,6 @@ void setup() {
   pinMode(43, INPUT);
 //------------------------------
 
-
-
-
-
-
 //  mySerial.println("Hello, world?");
 //-------Servo setup------------
   for(int i = 0; i < 7;i++){
@@ -93,47 +96,34 @@ void setup() {
   for(int i = 0;i<echeckbox.length();i++){
     cupboardSelected[echeckbox[i]-65] = 's';
   }
-}
-void ledWriteHigh(int pin){
-  i2c_LED.digitalWrite(P0, LOW);
-  i2c_LED.digitalWrite(P1, LOW);
-  i2c_LED.digitalWrite(P2, LOW);
-  i2c_LED.digitalWrite(P3, LOW);
-  i2c_LED.digitalWrite(P4, LOW);
-  i2c_LED.digitalWrite(P5, LOW);
-  i2c_LED.digitalWrite(P6, LOW);
-  i2c_LED.digitalWrite(pin, HIGH);
-}
-void ledWriteLow(){
-  i2c_LED.digitalWrite(P0, LOW);
-  i2c_LED.digitalWrite(P1, LOW);
-  i2c_LED.digitalWrite(P2, LOW);
-  i2c_LED.digitalWrite(P3, LOW);
-  i2c_LED.digitalWrite(P4, LOW);
-  i2c_LED.digitalWrite(P5, LOW);
-  i2c_LED.digitalWrite(P6, LOW);
+  for(int i = 0;i<2;i++){
+    showFloorSelected();
+  }
 }
 
 void loop() {
   // put your main code here, to run repeatedly:    
   if (mySerial.available()) {
-      char tmp_mySerial = mySerial.read();
-      Serial.write(tmp_mySerial);
+    char tmp_mySerial = mySerial.read();
+    Serial.write(tmp_mySerial);
+    if(tmp_mySerial > 64 && tmp_mySerial < 91){
       if(tmp_mySerial == 'H'){
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++){
           EEPROM.write(i, 0);
         }
         for(int i = 0;i<7;i++){
           cupboardSelected[i] = 'n';
-        }
+        }        
       }
-      else if(tmp_mySerial > 64 && tmp_mySerial < 91){
+      else {
         EEPROM.write(tmp_mySerial-65, tmp_mySerial);
         cupboardSelected[tmp_mySerial - 65] = 's';
+        for(int i = 0;i<2;i++){
+          showFloorSelected();
+        }
       }
-
-      
     }
+  }
   if( millis() - last_time > period) {
     clk.getTime();
 
@@ -212,9 +202,11 @@ void loop() {
       }
     }
   }
-  if(clk.hour == 16 && clk.minute == 15){
-    if(cupboardSelected[0] == 's'){
+  if(clk.hour == 13 && clk.minute == 47){
+    if(cupboardSelected[5] == 's'){
       if(check[5] == 0){
+//      //--Set buzzer to stop working----        
+        mySerial.write('X');
         ledWriteHigh(P5);
 //        tone(A0,600);
         check[5] = 1;
@@ -257,18 +249,21 @@ void loop() {
   }
   for(int i = 0;i<7;i++){
     if(cupboardState_pre[i] == 'o' && cupboardState_now[i] == 'c'){
-      if(check[i] == 1){
         Serial.print("floor "+String(i)+" open then close");
         Serial.println();
 //        noTone(A0);
         ledWriteLow();
+//      //--Set buzzer to stop working----        
+        mySerial.write('Y');
         //--------Line notify-------------
+        delay(1000);
         mySerial.write('Z');
         //--------------------------------      
 //      //-----Set servo to lock----------
         m[i].write(90);
 //      //--------------------------------
-      }
+
+
 
     }
   }
@@ -277,4 +272,35 @@ void loop() {
     cupboardState_pre[i] = cupboardState_now[i];    
   }
 //  delay(1000);
+}
+void ledWriteHigh(int pin){
+  i2c_LED.digitalWrite(P0, LOW);
+  i2c_LED.digitalWrite(P1, LOW);
+  i2c_LED.digitalWrite(P2, LOW);
+  i2c_LED.digitalWrite(P3, LOW);
+  i2c_LED.digitalWrite(P4, LOW);
+  i2c_LED.digitalWrite(P5, LOW);
+  i2c_LED.digitalWrite(P6, LOW);
+  i2c_LED.digitalWrite(pin, HIGH);
+}
+void ledWriteLow(){
+  i2c_LED.digitalWrite(P0, LOW);
+  i2c_LED.digitalWrite(P1, LOW);
+  i2c_LED.digitalWrite(P2, LOW);
+  i2c_LED.digitalWrite(P3, LOW);
+  i2c_LED.digitalWrite(P4, LOW);
+  i2c_LED.digitalWrite(P5, LOW);
+  i2c_LED.digitalWrite(P6, LOW);
+}
+void showFloorSelected(){
+  if(cupboardSelected[0] == 's')    i2c_LED.digitalWrite(P0, HIGH);
+  if(cupboardSelected[1] == 's')    i2c_LED.digitalWrite(P1, HIGH);
+  if(cupboardSelected[2] == 's')    i2c_LED.digitalWrite(P2, HIGH);
+  if(cupboardSelected[3] == 's')    i2c_LED.digitalWrite(P3, HIGH);
+  if(cupboardSelected[4] == 's')    i2c_LED.digitalWrite(P4, HIGH);
+  if(cupboardSelected[5] == 's')    i2c_LED.digitalWrite(P5, HIGH);
+  if(cupboardSelected[6] == 's')    i2c_LED.digitalWrite(P6, HIGH);
+  delay(500);  
+  ledWriteLow();
+  delay(500);  
 }
