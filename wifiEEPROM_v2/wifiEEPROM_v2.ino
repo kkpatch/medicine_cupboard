@@ -49,7 +49,10 @@ ESP8266WebServer server(80);
 
 void setup()
 {
+  //-----wifi button-----
   pinMode(D8,INPUT);
+  //-----buzzer----------
+  pinMode(13,OUTPUT);
 
 //  Serial.begin(115200);
 //  clk.begin();
@@ -170,19 +173,20 @@ void loop() {
   }
   if (mySerial.available()) {
     char mySerial_char;
-    mySerial_char = mySerial.read();
+    mySerial_char = mySerial.read();    
+    Serial.write(mySerial.read());
     if(mySerial_char == 'Z'){
       LINE.notify("ขณะนี้ ผู้รับบริการได้รับยาเรียบร้อยแล้ว");  
     }
     if(mySerial_char == 'X'){
       // buzzer ดัง 
-      
+      tone(13,600);
     }
     if(mySerial_char == 'Y'){
       // buzzer ดับ 
-      
+      noTone(13);
     }
-    Serial.write(mySerial.read());
+
   }
 
 //    clk.getTime();
