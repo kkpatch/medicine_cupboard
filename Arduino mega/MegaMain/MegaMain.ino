@@ -1,3 +1,5 @@
+#include <Keyboard.h>
+
 #include <PCF8574.h>
 
 #include <Wire.h>
@@ -22,6 +24,8 @@ char servoState_now[7] = {'l','l','l','l','l','l','l'};     //(l)ock,(u)nlock
 
 int check[7] = {0,0,0,0,0,0,0};
 
+bool unlockEveryFloor = false;
+
 Servo m[7];
 
 unsigned long period = 1000; 
@@ -44,10 +48,10 @@ void setup() {
   
 //--------RTC setup-------------
   clk.begin();
-  clk.fillByYMD(2021, 8, 24); //Jan 19,2013
-  clk.fillByHMS(1, 47, 30); //15:28 30"
-  clk.fillDayOfWeek(TUE);//Saturday
-  clk.setTime();//write time to the RTC chip
+//  clk.fillByYMD(2021, 8, 24); //Jan 19,2013
+//  clk.fillByHMS(1, 01, 30); //15:28 30"
+//  clk.fillDayOfWeek(TUE);//Saturday
+//  clk.setTime();//write time to the RTC chip
 //------------------------------    
 
 //--------SWSerial setup--------  
@@ -149,6 +153,17 @@ void loop() {
       }
    }
   }
+
+  if(digitalRead(49) == 1){
+    unlockEveryFloor = true;    
+  }
+  if(unlockEveryFloor == true){
+    for(int i = 0;i<7;i++){
+        m[i].write(0);
+        delay(500);      
+    }
+  }
+  
   if(clk.hour == 7 && clk.minute == 45){
     if(cupboardSelected[0] == 's'){
       if(check[0] == 0){
@@ -247,26 +262,32 @@ void loop() {
       Serial.println();
     }
   }
+  
   for(int i = 0;i<7;i++){
     if(cupboardState_pre[i] == 'o' && cupboardState_now[i] == 'c'){
+
         Serial.print("floor "+String(i)+" open then close");
         Serial.println();
 //        noTone(A0);
         ledWriteLow();
 //      //--Set buzzer to stop working----        
-        mySerial.write('Y');
-        //--------Line notify-------------
-        delay(1000);
-        mySerial.write('Z');
-        //--------------------------------      
+        mySerial.write('Y');      
+        if(unlockEveryFloor == false){
+          //--------Line notify-------------
+          delay(1000);
+          mySerial.write('Z');
+          //--------------------------------   
+        }   
 //      //-----Set servo to lock----------
         m[i].write(90);
-//      //--------------------------------
+//      //--------------------------------        
+      }
+
 
 
 
     }
-  }
+
   
   for(int i = 0;i<7;i++){
     cupboardState_pre[i] = cupboardState_now[i];    
