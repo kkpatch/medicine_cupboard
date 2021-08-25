@@ -24,7 +24,9 @@ char servoState_now[7] = {'l','l','l','l','l','l','l'};     //(l)ock,(u)nlock
 
 int check[7] = {0,0,0,0,0,0,0};
 
-bool unlockEveryFloor = false;
+int currentFloor = 0;
+
+//bool unlockEveryFloor = false;
 
 Servo m[7];
 
@@ -82,13 +84,26 @@ void setup() {
 //------------------------------
 
 //  mySerial.println("Hello, world?");
-//-------Servo setup------------
-  for(int i = 0; i < 7;i++){
-    m[i].attach(i+2);
-    m[i].write(90);
-    delay(100); // หน่วงเวลา 1000ms   
-  }
-
+////-------Servo setup------------
+//  for(int i = 0; i < 7;i++){
+//    m[i].attach(i+2);
+//    m[i].write(90);
+//    delay(100); // หน่วงเวลา 1000ms   
+//  }
+//  m[0].attach(2);
+//  delay(100);
+//  m[1].attach(8);
+//  delay(100);
+//  m[2].attach(3);
+//  delay(100);
+//  m[3].attach(7);
+//  delay(100);
+//  m[4].attach(4);
+//  delay(100);
+//  m[5].attach(6);
+//  delay(100);
+//  m[6].attach(5);
+//  delay(100);
   String echeckbox;
   for (int i = 0; i < 6; ++i)
   {
@@ -100,7 +115,7 @@ void setup() {
   for(int i = 0;i<echeckbox.length();i++){
     cupboardSelected[echeckbox[i]-65] = 's';
   }
-  for(int i = 0;i<2;i++){
+  for(int i = 0;i<5;i++){
     showFloorSelected();
   }
 }
@@ -119,12 +134,15 @@ void loop() {
           cupboardSelected[i] = 'n';
         }        
       }
+      if(tmp_mySerial == 'I'){
+        for(int i = 0;i<5;i++){
+          showFloorSelected();
+        }            
+      }
       else {
         EEPROM.write(tmp_mySerial-65, tmp_mySerial);
         cupboardSelected[tmp_mySerial - 65] = 's';
-        for(int i = 0;i<2;i++){
-          showFloorSelected();
-        }
+
       }
     }
   }
@@ -153,25 +171,27 @@ void loop() {
       }
    }
   }
-
-  if(digitalRead(49) == 1){
-    unlockEveryFloor = true;    
-  }
-  if(unlockEveryFloor == true){
-    for(int i = 0;i<7;i++){
-        m[i].write(0);
-        delay(500);      
-    }
-  }
   
-  if(clk.hour == 7 && clk.minute == 45){
+////--- unlock all floor when push button ---
+//  if(digitalRead(49) == 1){
+//    for(int i = 0;i<7;i++){
+//        m[i].write(0);
+//        delay(500);      
+//    }   
+//  }
+//-----------------------------------------
+  
+  if(clk.hour == 22 && clk.minute == 17){
     if(cupboardSelected[0] == 's'){
       if(check[0] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 1;         
         ledWriteHigh(P0);
 //        tone(A0,600);
         check[0] = 1;      
         //----Set servo to unlock---------
-        m[0].write(0);
+//        m[0].write(0);
       //--------------------------------
       }      
     }
@@ -180,40 +200,54 @@ void loop() {
   if(clk.hour == 9 && clk.minute == 0){
     if(cupboardSelected[1] == 's'){
       if(check[1] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 2; 
         ledWriteHigh(P1);
 //        tone(A0,600);
         check[1] = 1;
-        m[1].write(0);
+//        m[1].write(0);
       }
     }      
   }
-  if(clk.hour == 11 && clk.minute == 45){
+  if(clk.hour == 11 && clk.minute == 18){
     if(cupboardSelected[2] == 's'){
       if(check[2] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 3;
         ledWriteHigh(P2);
-//        tone(A0,600);
+//        tone(A0,600); 
         check[2] = 1;
-        m[2].write(0);
+//        m[2].write(0);
       }
     }
   }
   if(clk.hour == 13 && clk.minute == 0){
     if(cupboardSelected[3] == 's'){
       if(check[3] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 4; 
         ledWriteHigh(P3);
 //        tone(A0,600);
+
         check[3] = 1;
-        m[3].write(0);
+//        m[3].write(0);
       }
     }
   }
   if(clk.hour == 15 && clk.minute == 58){
     if(cupboardSelected[4] == 's'){
       if(check[4] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 5; 
         ledWriteHigh(P4);
 //        tone(A0,600);
+
         check[4] = 1;
-        m[4].write(0);
+//        m[4].write(0);
       }
     }
   }
@@ -222,16 +256,21 @@ void loop() {
       if(check[5] == 0){
 //      //--Set buzzer to stop working----        
         mySerial.write('X');
+        delay(500);
+        currentFloor = 6;
         ledWriteHigh(P5);
 //        tone(A0,600);
         check[5] = 1;
-        m[5].write(0);
+//        m[5].write(0);
       }
     }    
   }
   if(clk.hour == 16 && clk.minute == 51){
     if(cupboardSelected[6] == 's'){
       if(check[6] == 0){
+        mySerial.write('X');
+        delay(500);
+        currentFloor = 7;
         ledWriteHigh(P6);
 //        tone(A0,600);
         check[6] = 1;
@@ -259,6 +298,7 @@ void loop() {
   for(int i = 0;i<7;i++){
     if(cupboardState_pre[i] == 'c' && cupboardState_now[i] == 'o'){
       Serial.print("floor "+String(i)+" close then open");
+      mySerial.write(char(97+i));
       Serial.println();
     }
   }
@@ -270,17 +310,28 @@ void loop() {
         Serial.println();
 //        noTone(A0);
         ledWriteLow();
-//      //--Set buzzer to stop working----        
-        mySerial.write('Y');      
-        if(unlockEveryFloor == false){
-          //--------Line notify-------------
-          delay(1000);
+        if(i+1 == currentFloor){
+        //--------Line notify-------------              
           mySerial.write('Z');
-          //--------------------------------   
-        }   
-//      //-----Set servo to lock----------
-        m[i].write(90);
-//      //--------------------------------        
+          delay(500);
+        //--------------------------------
+        //---Set buzzer to stop working--- 
+          mySerial.write('Y');
+          delay(500);
+        //--------------------------------
+        }
+        else{
+        //--------บอกว่าตู้ไหนปิด------------              
+          mySerial.write(char('h'+i));
+        //--------------------------------          
+        }
+
+
+  //--------------------------------   
+//        }   
+////      //-----Set servo to lock----------
+//        m[i].write(90);
+////      //--------------------------------        
       }
 
 
