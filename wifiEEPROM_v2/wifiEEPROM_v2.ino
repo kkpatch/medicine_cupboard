@@ -19,7 +19,6 @@
 #include <Wire.h>
 #include "DS1307.h"
 
-
 SoftwareSerial mySerial(14, 12); // RX, TX
 DS1307 clk;//define a object of DS1307 class
 
@@ -107,6 +106,7 @@ void setup()
   for(int i = 0;i<echeckbox.length();i++){
     mySerial.write(echeckbox[i]);
   }
+  mySerial.write('I');
   String elineToken = "";
   for (int i = 75; i < 120; ++i)
   {
@@ -186,7 +186,12 @@ void loop() {
       // buzzer ดับ 
       noTone(13);
     }
-
+    if(mySerial_char >= 'a' && mySerial_char <= 'g'){
+      LINE.notify(String("ชั้นที่") + String(mySerial_char-96) + String("เปิด"));
+    }
+    if(mySerial_char >= 'h' && mySerial_char <= 'n'){
+      LINE.notify(String("ชั้นที่") + String(mySerial_char-103) + String("ปิด"));
+    }
   }
 
 //    clk.getTime();
